@@ -1,0 +1,19 @@
+{% extends "base.html"%}
+
+
+{% block content %}
+    {% if err %}
+        <div  role="alert">
+          <p >{{ err }}</p>
+        </div>
+    {% endif %}
+    <form action="/user/login" methd="POST">
+        <label>昵称：</label>
+        <input type="text" name="nickname">
+        <br>
+        <label>密码：</label>
+        <input type="password" name="password">
+        <br>
+        <input type="submit">
+    </form>
+{% endblock %}

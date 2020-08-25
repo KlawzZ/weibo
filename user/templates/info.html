@@ -1,0 +1,23 @@
+{% extends "base.html"%}
+
+
+{% block content %}
+    <h1>{{ user.nickname }},欢迎</h1>
+    <hr>
+    <img src="{{ user.avatar }}"  width="200px" />
+    <br>
+    <ul>
+        {% if user.gender == 'male' %}
+        <li ><strong>性别</strong>：小哥哥</li>
+        {% elif user.gender == 'female' %}
+        <li ><strong>性别</strong>：小姐姐</li>
+        {% else %}
+        <li ><strong>性别</strong>：保密</li>
+        {% endif %}
+
+        <li ><strong>生日</strong>：{{ user.birthday }}</li>
+        <li ><strong>城市</strong>：{{ user.city }}</li>
+        <li ><strong>简介</strong>：{{ user.bio }}</li>
+        <li ><strong>注册时间</strong>：{{ user.created }}</li>
+    </ul>
+{% endblock %}
