@@ -6,6 +6,8 @@ from flask_migrate import Migrate, MigrateCommand
 from libs.orm import db
 from user.views import user_bp
 from weibo.views import weibo_bp
+from user.models import User
+from weibo.models import Weibo
 
 # 初始化 app
 app = Flask(__name__)
@@ -30,6 +32,14 @@ app.register_blueprint(weibo_bp)
 def home():
     '''首页'''
     return redirect('/weibo/index')
+
+
+@manager.command
+def create_test_weibo():
+    '''创建微博测试数据'''
+    users = User.fake_uesr(50)
+    uid_list = [u.id for u in users]
+    Weibo.fake_weibos(uid_list, 5000)
 
 
 if __name__ == "__main__":

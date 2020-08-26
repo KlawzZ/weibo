@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    <p>
+        {{ weibo.content }}
+    </p>
+
+    <a href="/weibo/delete?wid={{ weibo.id }}">删除文章</a>
+{% endblock %}

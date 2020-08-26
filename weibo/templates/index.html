@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    <ul>
+        {% for wb in weibos %}
+            <li><a href="/weibo/read?wid={{ weibo.id }}">{{ wb.content }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
