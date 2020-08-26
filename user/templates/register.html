@@ -1,39 +1,37 @@
-{% extends "base.html"%}
+{% extends "base.html" %}
 
 
 {% block content %}
     {% if err %}
         <div role="alert">
-          <p>{{ err }}</p>
+            <p>{{ err }}</p>
         </div>
     {% endif %}
 
-    <form action="/user/register" methd="POST" enctype="multipart/form-data">
+    <form action="/user/register" method="POST" enctype="multipart/form-data">
         <label>昵称：</label><input type="text" name="nickname">
         <br>
         <label>密码：</label><input type="password" name="password1">
         <br>
         <label>确认密码：</label><input type="password" name="password2">
         <br>
-        <label>城市：</label><input type="text" name="city">
-        <br>
-        <input  type="radio" name="gender" value="male" />
-        <label >男</label>
-        <input  type="radio" name="gender" value="female" />
-        <label >女</label>
-        <input  type="radio" name="gender" value="unknow" checked />
-        <label >保密</label>
+        <input type="radio" name="gender" value="male"/>
+        <label>男</label>
+        <input type="radio" name="gender" value="female"/>
+        <label>女</label>
+        <input type="radio" name="gender" value="unknow" checked/>
+        <label>保密</label>
         <br>
         <label>生日</label>
-        <input type="date" name="birthday" min="1960-01-01" max="2002-12-31" />
+        <input type="date" name="birthday" min="1960-01-01" max="2002-12-31"/>
         <br>
-        <label >城市</label>
-        <input type="text" name="city" />
+        <label>城市</label>
+        <input type="text" name="city"/>
         <br>
         <label>头像</label>
-        <input type="file" name="avatar" />
+        <input type="file" name="avatar"/>
         <br>
-        <label >简介</label>
+        <label>简介</label>
         <textarea name="bio" rows="5"></textarea>
         <br>
         <input type="submit" value="注册">
