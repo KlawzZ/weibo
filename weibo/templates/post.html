@@ -2,8 +2,16 @@
 
 
 {% block content %}
+
+    <!-- 处理错误信息 -->
+    {% if err %}
+    <div class="alert alert-danger" role="alert">
+      <p class="mb-0">{{ err }}</p>
+    </div>
+    {% endif %}
+
     <form action="/weibo/post" method="POST">
-        内容：<textarea name="content"></textarea>
+        内容：<textarea name="content" rows="5"></textarea>
         <br>
         <input type="submit" value="发布">
     </form>

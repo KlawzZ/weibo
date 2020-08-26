@@ -2,9 +2,18 @@
 
 
 {% block content %}
+    <h4 class="alert-heading">{{ weibo.author.nickname }}</h4>
+    <hr />
     <p>
-        {{ weibo.content }}
+        {{ weibo.content | replace('\n', '<br>') | safe }}
     </p>
 
-    <a href="/weibo/delete?wid={{ weibo.id }}">删除文章</a>
+    {% if weibo.uid == session.get('uid') %}
+    <a class="text-info" href="/weibo/edit?wid={{ weibo.id }}">修改微博</a>
+    &nbsp;&nbsp;&nbsp;
+    <a class="text-danger" href="/weibo/delete?wid={{ weibo.id }}">删除微博</a>
+    &nbsp;&nbsp;&nbsp;
+    {% endif %}
+    <br>
+    <span class="text-secondary">{{ weibo.created }}</span>
 {% endblock %}

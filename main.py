@@ -37,9 +37,9 @@ def home():
 @manager.command
 def create_test_weibo():
     '''创建微博测试数据'''
-    users = User.fake_uesr(50)
+    users = User.fake_users(20)
     uid_list = [u.id for u in users]
-    Weibo.fake_weibos(uid_list, 5000)
+    Weibo.fake_weibos(uid_list, 1000)
 
 
 if __name__ == "__main__":
