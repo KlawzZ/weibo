@@ -15,7 +15,9 @@
 {% endfor %}
 
 <nav aria-label="Page navigation">
-  <ul class="pagination">
+    {% if page > 1 %}
+    <a class="page-link" href="/weibo/index?page={{ page-1 }}"> << </a>
+    {% endif %}
     {% for pg in pages %}
         <!-- 当前页不需要链接 -->
         {% if pg == page %}
@@ -24,6 +26,8 @@
         <a class="page-link" href="/weibo/index?page={{ pg }}">{{ pg }}</a>
         {% endif %}
     {% endfor %}
-  </ul>
+    {% if page < max_page %}
+    <a class="page-link" href="/weibo/index?page={{ page + 1 }}"> >> </a>
+    {% endif %}
 </nav>
 {% endblock %}

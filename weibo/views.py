@@ -38,7 +38,7 @@ def index():
     else:
         start, end = 1, max_page
     pages = range(start, end + 1)
-    return render_template('index.html', wb_list=wb_list, pages=pages, page=page)
+    return render_template('index.html', wb_list=wb_list, pages=pages, page=page, max_page=max_page)
 
 
 @weibo_bp.route('/post', methods=("POST", "GET"))
