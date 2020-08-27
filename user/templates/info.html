@@ -4,8 +4,9 @@
 {% block content %}
     <h1>{{ user.nickname }},欢迎</h1>
     <hr>
-    <img src="{{ user.avatar }}" width="200px"/>
-    <br>
+    <figure class="figure">
+        <img src="{{ user.avatar }}" class="figure-img img-fluid rounded" width="200px" />
+    </figure>
     <ul>
         {% if user.gender == 'male' %}
             <li><strong>性别</strong>：小哥哥</li>

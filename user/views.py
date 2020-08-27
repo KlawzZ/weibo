@@ -37,7 +37,7 @@ def register():
                     gender=gender, birthday=birthday, city=city, bio=bio, created=now)
 
         # 保存头像
-        avatar_file = request.files.get('abatar')
+        avatar_file = request.files.get('avatar')
         if avatar_file:
             user.avatar = save_avatar(avatar_file)
         try:
