@@ -8,11 +8,10 @@ from flask import render_template
 from flask import session
 from flask import abort
 
-
 from libs.orm import db
 from libs.utils import login_required
 from weibo.models import Weibo
-
+from weibo.models import Comment
 
 weibo_bp = Blueprint('weibo', __name__, url_prefix='/weibo')
 weibo_bp.template_folder = './templates'
@@ -28,15 +27,13 @@ def index():
 
     max_page = ceil(Weibo.query.count() / per_page)  # 最大页码
 
-    if max_page > 7:
-        if page <= 3:
-            start, end = 1, 7  # 起始处的页码范围
-        elif page > (max_page - 3):
-            start, end = max_page - 6, max_page  # 结尾处的页码范围
-        else:
-            start, end = (page - 3), (page + 3)
+    if page <= 3:
+        start, end = 1, min(7, max_page)  # 起始处的页码范围
+    elif page > (max_page - 3):
+        start, end = max_page - 6, max_page  # 结尾处的页码范围
     else:
-        start, end = 1, max_page
+        start, end = (page - 3), (page + 3)
+
     pages = range(start, end + 1)
     return render_template('index.html', wb_list=wb_list, pages=pages, page=page, max_page=max_page)
 
@@ -50,7 +47,7 @@ def post_weibo():
         content = request.form.get('content', '').strip()
         now = datetime.datetime.now()
 
-        #检查微博内容是否为空
+        # 检查微博内容是否为空
         if not content:
             return render_template('post.html', err='微博内容不允许为空')
 
@@ -69,19 +66,21 @@ def read_weibo():
     wid = int(request.args.get('wid'))
     weibo = Weibo.query.get(wid)
     # user = User.query.get(weibo.uid)  # 获取微博作者
-    return render_template('read.html', weibo=weibo)
+
+    # 获取当前微博所有的评论
+    comments = Comment.query.filter_by(wid=wid).order_by(Comment.created.desc())
+    return render_template('read.html', weibo=weibo, comments=comments)
 
 
 @weibo_bp.route('/edit', methods=("POST", "GET"))
 @login_required
 def edit_weibo():
     '''修改微博'''
-
-    #检查是否是在修改自己的微博
+    # 检查是否是在修改自己的微博
     wid = int(request.form.get('wid', 0)) or int(request.args.get('wid', 0))
     weibo = Weibo.query.get(wid)
     if weibo.uid != session['uid']:
-       abort(403)
+        abort(403)
 
     if request.method == 'POST':
         content = request.form.get('content', '').strip()
@@ -98,8 +97,7 @@ def edit_weibo():
 
         return redirect(f'/weibo/read?wid={wid}')
     else:
-        #获取微博，并传到模板中
-        weibo = Weibo.query.get(wid)
+        # 获取微博，并传到模板中
         return render_template('edit.html', weibo=weibo)
 
 
@@ -117,3 +115,52 @@ def delete_weibo():
         return redirect('/')
     else:
         abort(403)
+
+
+@weibo_bp.route('/post_comment', methods=("POST",))
+@login_required
+def post_comment():
+    '''发表评论'''
+    wid = int(request.form.get('wid'))
+    content = request.form.get('content')
+    now = datetime.datetime.now()
+
+    # 创建 comment 对象
+    comment = Comment(uid=session['uid'], wid=wid, content=content, created=now)
+    db.session.add(comment)
+    db.session.commit()
+
+    return redirect(f'/weibo/read?wid={wid}')
+
+
+@weibo_bp.route('/reply', methods=("POST",))
+@login_required
+def reply():
+    '''发表回复'''
+    wid = int(request.form.get('wid'))
+    cid = int(request.form.get('cid'))
+    content = request.form.get('content')
+    now = datetime.datetime.now()
+
+    # 创建 comment 对象
+    comment = Comment(uid=session['uid'], wid=wid, cid=cid, content=content, created=now)
+    db.session.add(comment)
+    db.session.commit()
+
+    return redirect(f'/weibo/read?wid={wid}')
+
+
+@weibo_bp.route('/delete_comment')
+def delete_comment():
+    cid = int(request.args.get('cid'))
+    cmt = Comment.query.get(cid)
+
+    # 检查是否是在删除别人的评论
+    if cmt.uid != session['uid']:
+        abort(403)
+
+    # 修改数据
+    cmt.content = '当前评论已被删除'
+    db.session.commit()
+
+    return redirect('/')

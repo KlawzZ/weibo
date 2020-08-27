@@ -9,6 +9,7 @@ from weibo.views import weibo_bp
 from user.models import User
 from weibo.models import Weibo
 
+
 # 初始化 app
 app = Flask(__name__)
 app.secret_key = r'sodifjwoehoHOHH23OSHO234@234Ohsoepfho1@#i009()90U#$%DFPOIJASO'
