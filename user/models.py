@@ -16,6 +16,9 @@ class User(db.Model):
     bio = db.Column(db.Text, default='这家伙很懒，什么也没有留下...')
     created = db.Column(db.DateTime, nullable=False)  # 注册时间
 
+    n_follow = db.Column(db.Integer, nullable=False, default=0)  # 自己关注了多少人
+    n_fans = db.Column(db.Integer, nullable=False, default=0)  # 自己有多少粉丝
+
     @classmethod
     def fake_users(cls, num):
         users = []
@@ -37,3 +40,11 @@ class User(db.Model):
         db.session.add_all(users)
         db.session.commit()
         return users
+
+
+class Follow(db.Model):
+    '''关注表'''
+    __tablename__ = 'follow'
+
+    uid = db.Column(db.Integer, primary_key=True)
+    fid = db.Column(db.Integer, primary_key=True)

@@ -5,11 +5,13 @@
     <!-- 微博内容 -->
 {% for wb in wb_list %}
 <div class="alert alert-info" role="alert">
-  <strong>{{ wb.author.nickname }}</strong>说:
+  <a href="/user/other?uid={{ wb.uid }}"><strong>{{ wb.author.nickname }}</strong></a>说:
   <br />
   {{ wb.content | replace('\n', '<br />') | safe }}
   <br />
   <a class="text-secondary" href="/weibo/read?wid={{ wb.id }}">{{ wb.updated }}</a>
+  &emsp;
+  <span class="text-danger">{{ wb.n_thumb }} 赞</span>
 </div>
 <hr />
 {% endfor %}

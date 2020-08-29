@@ -10,6 +10,7 @@ class Weibo(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     uid = db.Column(db.Integer, nullable=False, index=True)
+    n_thumb = db.Column(db.Integer, nullable=False, default=0)
     content = db.Column(db.Text, nullable=False)
     created = db.Column(db.DateTime, nullable=False)
     updated = db.Column(db.DateTime, nullable=False)
@@ -61,3 +62,10 @@ class Comment(db.Model):
             return None
         else:
             return Comment.query.get(self.cid)
+
+
+class Thumb(db.Model):
+    __tablename__='thumb'
+
+    uid = db.Column(db.Integer, primary_key=True)
+    wid = db.Column(db.Integer, primary_key=True)

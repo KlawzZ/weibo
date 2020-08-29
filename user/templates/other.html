@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+<!-- 填充 content -->
+{% block content %}
+<div class="row align-items-center">
+  <h2 class="col-sm-3">{{ user.nickname }} </h2>
+  <div class="col">
+    {% if is_followed %}
+    <a class="text-danger" href="/user/follow?fid={{ user.id }}">取消关注</a>
+    {% else %}
+    <a class="text-primary" href="/user/follow?fid={{ user.id }}">关注</a>
+    {% endif %}
+  </div>
+</div>
+
+<hr />
+
+<figure class="figure">
+  <img src="{{ user.avatar }}" class="figure-img img-fluid rounded" width="200px" />
+</figure>
+
+<ul class="list-group">
+  <li class="list-group-item"><strong>关注</strong>：{{ user.n_follow }}</li>
+  <li class="list-group-item"><strong>粉丝</strong>：{{ user.n_fans }}</li>
+  {% if user.gender == 'male' %}
+  <li class="list-group-item"><strong>性别</strong>：小哥哥</li>
+  {% elif user.gender == 'female' %}
+  <li class="list-group-item"><strong>性别</strong>：小姐姐</li>
+  {% else %}
+  <li class="list-group-item"><strong>性别</strong>：保密</li>
+  {% endif %}
+
+  <li class="list-group-item"><strong>生日</strong>：{{ user.birthday }}</li>
+  <li class="list-group-item"><strong>城市</strong>：{{ user.city }}</li>
+  <li class="list-group-item"><strong>简介</strong>：{{ user.bio }}</li>
+  <li class="list-group-item"><strong>注册时间</strong>：{{ user.created }}</li>
+</ul>
+{% endblock %}

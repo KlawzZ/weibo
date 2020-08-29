@@ -8,6 +8,8 @@
         <img src="{{ user.avatar }}" class="figure-img img-fluid rounded" width="200px" />
     </figure>
     <ul>
+        <li class="list-group-item"><strong>关注</strong>：{{ user.n_follow }}</li>
+        <li class="list-group-item"><strong>粉丝</strong>：{{ user.n_fans }}</li>
         {% if user.gender == 'male' %}
             <li><strong>性别</strong>：小哥哥</li>
         {% elif user.gender == 'female' %}

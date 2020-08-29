@@ -5,6 +5,7 @@ from flask import request
 from flask import render_template
 from flask import redirect
 from flask import session
+from flask import abort
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -14,6 +15,7 @@ from libs.utils import check_password
 from libs.utils import save_avatar
 from libs.utils import login_required
 from user.models import User
+from user.models import Follow
 
 user_bp = Blueprint('user', __name__, url_prefix='/user')
 user_bp.template_folder = './templates'
@@ -73,7 +75,7 @@ def login():
             session['nickname'] = user.nickname
             return redirect('/user/info')
         else:
-            return '密码错误'
+            return render_template('login.html', err='密码错误')
     else:
         return render_template('login.html')
 
@@ -89,5 +91,69 @@ def info():
 
 @user_bp.route('/logout')
 def logout():
+    '''退出功能'''
     session.clear()
     return redirect('/')
+
+
+@user_bp.route('/other')
+def other():
+    '''查看用户信息'''
+    other_uid = int(request.args.get('uid'))  # 其他人的 uid
+    if other_uid == session.get('uid'):
+        # 如果是查看个人信息，直接跳回 /user/info 接口
+        return redirect('/user/info')
+
+    user = User.query.get(other_uid)  # 其他人
+
+    self_uid = session.get('uid')  # 取出自己的 uid
+    if self_uid:
+        if Follow.query.filter_by(uid=self_uid, fid=other_uid).count():
+            is_followed = True
+        else:
+            is_followed = False
+    else:
+        is_followed = False
+    return render_template('other.html', user=user, is_followed=is_followed)
+
+
+@user_bp.route('/follow')
+@login_required
+def follow():
+    fid = int(request.args.get('fid'))
+    uid = session['uid']
+
+    # 不允许用户自己关注自己
+    if uid == fid:
+        abort(403)
+
+    fw = Follow(uid=uid, fid=fid)
+    try:
+        # 提交关注数据
+        User.query.filter_by(id=uid).update({'n_follow': User.n_follow + 1})  # 自己关注的数量 +1
+        User.query.filter_by(id=fid).update({'n_fans': User.n_fans + 1})  # 对方的粉丝数 +1
+        db.session.add(fw)
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+        # 取消关注
+        User.query.filter_by(id=uid).update({'n_follow': User.n_follow - 1})  # 自己关注的数量 -1
+        User.query.filter_by(id=fid).update({'n_fans': User.n_fans - 1})  # 对方的粉丝数 -1
+        Follow.query.filter_by(uid=uid, fid=fid).delete()
+        db.session.commit()
+
+    return redirect(f'/user/other?uid={fid}')
+
+
+@user_bp.route('/fans')
+@login_required
+def show_fans():
+    '''查看粉丝列表'''
+    uid = session['uid']
+    # 找到自己的粉丝的 UID 列表
+    fans = Follow.query.filter_by(fid=uid).values('uid')
+    fans_uid_list = [uid for (uid,) in fans]
+
+    # 查找所有的粉丝信息
+    users = User.query.filter(User.id.in_(fans_uid_list))
+    return render_template('fans.html', users=users)
